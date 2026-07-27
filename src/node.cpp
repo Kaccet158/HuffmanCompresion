@@ -19,16 +19,19 @@ char LeafNode::getCharacter() const {
     return character; // Zwraca znak
 }
 
-std:;ostream& operator<<(std::ostream& os, LeafNode& leaf) {
+// Przeciarzony operator << dla lisica
+std::ostream& operator<<(std::ostream& os, const LeafNode& leaf) {
     os << "'" << leaf.character << "'(" << leaf.frequency << ")";
+    return os;
 }
 
 // Wewnetrzne wezly
-InternalNode::InternalNode(std::shared_ptr<Node> l, std::shared_ptr<Node> r) : Node(l->getFrequency() + p -> getFrequency()), left(l), right(p) {}
+InternalNode::InternalNode(std::shared_ptr<Node> l, std::shared_ptr<Node> r)
+    : Node(l->getFrequency() + r->getFrequency()), left(l), right(r) {}
 
-bool LeafNode::isLeaf() const {
+bool InternalNode::isLeaf() const {
     return false;
 }
 
-std::shared_ptr<Wezel> InternalNode::getLeft() const { return left; }
-std::shared_ptr<Wezel> InternalNode::getRight() const { return right; }
+std::shared_ptr<Node> InternalNode::getLeft() const { return left; }
+std::shared_ptr<Node> InternalNode::getRight() const { return right; }
