@@ -5,6 +5,8 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <fstream>
+#include <cstdint>
 
 // Funkcja rekurencyjna do czytania drzewa i nadawania 0 i 1
 void generateCodes(std::shared_ptr<Node> node, const std::string& path, std::map<char, std::string>& codes) {
@@ -25,9 +27,24 @@ void generateCodes(std::shared_ptr<Node> node, const std::string& path, std::map
 }
 
 int main() {
+    // Zmiana na wczytywanei danych z pliku zamiast stalego tekstu
+    std::ifstream inFile("fileToCompress.txt", std::ios::binary);
+    if (!inFile) {
+        std::cerr << "Blad: Nie mozna otworzyc pliku fileToCompress.txt\n";
+        return 1;
+    }
+    std::string text((std::istreambuf_iterator<char>(inFile)),
+                      std::istreambuf_iterator<char>());
+    inFile.close();
 
-    std::string text = "KAJAK";
-    std::cout << "Tekst: " << text << "\n\n";
+    if (text.empty()) {
+        std::cerr << "Blad: Plik fileToCompress.txt jest pusty\n";
+        return 1;
+    }
+
+    std::cout << "Tekst z pliku (" << text.length() << " znakow):\n";
+    std::cout << text << "\n\n";
+
 
     // Wpisanie wszystkich znakow z pliku
     std::array<int,256> frequency{}; // Tablica wystapien dla wszystkich znakow
@@ -80,6 +97,14 @@ int main() {
     std::cout << "Skompresowany tekst bitowy: " << compressed << "\n";
     std::cout << "Rozmiar przed: " << text.length() * 8 << " bitow\n";
     std::cout << "Rozmiar po: " << compressed.length() << " bitow\n";
+
+    // Zapis skompresowanych bitow do pliku (jako string "0101")
+    std::ofstream outFile("compressed.txt");
+    if (outFile) {
+        outFile << compressed;
+        outFile.close();
+        std::cout << "Zapisano skompresowany tekst do compressed.txt\n";
+    }
 
     return 0;
 }
